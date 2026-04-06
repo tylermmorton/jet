@@ -178,6 +178,10 @@ func UnwindRowFromModel(columns []Column, data interface{}) []Serializer {
 		structField := structValue.FieldByName(structFieldName)
 
 		if !structField.IsValid() {
+			structField = fieldByDBTag(structValue, columnName)
+		}
+
+		if !structField.IsValid() {
 			panic("missing struct field for column : " + columnName)
 		}
 
@@ -193,6 +197,19 @@ func UnwindRowFromModel(columns []Column, data interface{}) []Serializer {
 	}
 
 	return row
+}
+
+// fieldByDBTag scans structValue's fields for one whose `db:` tag matches
+// columnName. Returns the zero Value if not found.
+func fieldByDBTag(structValue reflect.Value, columnName string) reflect.Value {
+	t := structValue.Type()
+	for i := 0; i < t.NumField(); i++ {
+		tag := t.Field(i).Tag.Get("db")
+		if strings.Split(tag, ",")[0] == columnName {
+			return structValue.Field(i)
+		}
+	}
+	return reflect.Value{}
 }
 
 // UnwindRowsFromModels func
