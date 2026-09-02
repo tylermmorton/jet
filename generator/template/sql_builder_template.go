@@ -62,13 +62,14 @@ func (sb SQLBuilder) ShouldSkip(skip bool) SQLBuilder {
 
 // TableSQLBuilder is template for generating table SQLBuilder files
 type TableSQLBuilder struct {
-	Skip         bool
-	Path         string
-	FileName     string
-	InstanceName string
-	TypeName     string
-	DefaultAlias string
-	Column       func(columnMetaData metadata.Column) TableSQLBuilderColumn
+	Skip            bool
+	Path            string
+	GoPackageName   string // optional override; if empty, filepath.Base(Path) is used
+	FileName        string
+	InstanceName    string
+	TypeName        string
+	DefaultAlias    string
+	Column          func(columnMetaData metadata.Column) TableSQLBuilderColumn
 }
 
 // ViewSQLBuilder is template for generating view SQLBuilder files
@@ -95,9 +96,21 @@ func DefaultViewSQLBuilder(viewMetaData metadata.Table) ViewSQLBuilder {
 	return tableSQLBuilder
 }
 
-// PackageName returns package name of table sql builder types
+// PackageName returns package name of table sql builder types.
+// If GoPackageName is set it is returned directly; otherwise filepath.Base(Path) is used.
 func (tb TableSQLBuilder) PackageName() string {
+	if tb.GoPackageName != "" {
+		return tb.GoPackageName
+	}
 	return filepath.Base(tb.Path)
+}
+
+// UseGoPackageName returns a new TableSQLBuilder with an explicit Go package name that
+// differs from the last path segment. Useful when the output directory name and the
+// desired package identifier must differ (e.g. directory "tables" → package "crawlertable").
+func (tb TableSQLBuilder) UseGoPackageName(name string) TableSQLBuilder {
+	tb.GoPackageName = name
+	return tb
 }
 
 // UsePath returns new TableSQLBuilder with new relative path set

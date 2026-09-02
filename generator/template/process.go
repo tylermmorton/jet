@@ -2,9 +2,7 @@ package template
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -25,10 +23,6 @@ func ProcessSchema(dirPath string, schemaMetaData metadata.Schema, generatorTemp
 	schemaPath := filepath.Join(dirPath, schemaTemplate.Path)
 
 	fmt.Println("Destination directory:", schemaPath)
-	fmt.Println("Cleaning up destination directory...")
-	if err := os.RemoveAll(schemaPath); err != nil {
-		return errors.New("failed to cleanup generated files")
-	}
 
 	err := processModel(schemaPath, schemaMetaData, schemaTemplate)
 	if err != nil {
