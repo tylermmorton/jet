@@ -62,14 +62,14 @@ func (sb SQLBuilder) ShouldSkip(skip bool) SQLBuilder {
 
 // TableSQLBuilder is template for generating table SQLBuilder files
 type TableSQLBuilder struct {
-	Skip            bool
-	Path            string
-	GoPackageName   string // optional override; if empty, filepath.Base(Path) is used
-	FileName        string
-	InstanceName    string
-	TypeName        string
-	DefaultAlias    string
-	Column          func(columnMetaData metadata.Column) TableSQLBuilderColumn
+	Skip          bool
+	Path          string
+	GoPackageName string // optional override; if empty, filepath.Base(Path) is used
+	FileName      string
+	InstanceName  string
+	TypeName      string
+	DefaultAlias  string
+	Column        func(columnMetaData metadata.Column) TableSQLBuilderColumn
 }
 
 // ViewSQLBuilder is template for generating view SQLBuilder files
